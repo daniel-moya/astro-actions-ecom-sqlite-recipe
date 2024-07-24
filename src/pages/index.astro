@@ -1,0 +1,45 @@
+---
+import CartAction from "../components/cart-action";
+import CartIcon from "../components/cart-icon";
+import Base from "../layouts/base.astro";
+import { count, eq } from "drizzle-orm";
+import { db } from "../libs/turso";
+import { cartItems } from "../models";
+
+let cartCount = 0;
+const userId = 1;
+try {
+	const [result] = await db
+		.select({ count: count() })
+		.from(cartItems)
+		.where(eq(cartItems.user_id, userId));
+	cartCount = result.count;
+} catch (e) {
+	console.log("error", e);
+}
+---
+
+<Base>
+	<CartIcon initialCount={cartCount} client:load />
+	<h2>Products</h2>
+	<div class="grid">
+		<article>
+			<h3>Product 1</h3>
+			<img
+				src="https://imgs.search.brave.com/OluJWj5kVf6fGaYKuxcbJx0GcUiZDnVCtweqzfcYWh0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90aHJl/YWRoZWFkcy5jb20v/Y2RuL3Nob3AvZmls/ZXMvd2hpdGUtb3Zl/cnNpemVkMi5qcGc_/dj0xNzA3NzgxNzQw/JndpZHRoPTIwMDA"
+				height="200"
+				width="200"
+			/>
+			<CartAction client:load action="add" priceId="1" />
+		</article>
+		<article>
+			<h3>Product 2</h3>
+			<img
+				src="https://imgs.search.brave.com/rG6FlRHHCZPzgKQ8dnSnjtsZv6bZDTSkjxAryCfx2zQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZS5obS5jb20vYXNz/ZXRzL2htLzdlL2E5/LzdlYTliMDcyZDY5/ODIzYzUzN2VjMWMz/MGEwZGY3ZWI0YTYy/M2VmMjMuanBnP2lt/d2lkdGg9MTUzNg"
+				height="200"
+				width="200"
+			/>
+			<CartAction client:load action="add" priceId="2" />
+		</article>
+	</div>
+</Base>

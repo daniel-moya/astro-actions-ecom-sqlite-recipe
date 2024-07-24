@@ -1,0 +1,53 @@
+---
+import CartAction from "../components/cart-action.tsx";
+import Base from "../layouts/base.astro";
+import { db } from "../libs/turso.ts";
+import { eq } from "drizzle-orm";
+import { products, prices, cartItems } from "../models";
+import Cart from "../components/cart.tsx";
+
+const userId = 1;
+let items = [];
+try {
+	items = await db
+		.select({
+			name: products.name,
+			description: products.description,
+			image: products.image,
+			price_id: cartItems.price_id,
+			created_at: cartItems.created_at,
+			quantity: cartItems.quantity,
+		})
+		.from(cartItems)
+		.leftJoin(prices, eq(prices.id, cartItems.price_id))
+		.leftJoin(products, eq(products.id, prices.product_id))
+		.where(eq(cartItems.user_id, userId))
+		.all();
+	console.log(items);
+} catch (e) {
+	console.log("error", e);
+}
+---
+
+<Base>
+	<a href="/">Home</a>
+	<h1>My Cart</h1>
+	{
+		items.length > 0 ? (
+			<CartAction
+				client:load
+				action="empty"
+				text="Clear cart"
+			/>
+		) : (
+			<p>There are no items in the cart</p>
+		)
+	}
+	<Cart initialItems={items} client:load />
+</Base>
+<style>
+	.grid {
+		display: flex;
+		flex-direction: flex-row;
+	}
+</style>
