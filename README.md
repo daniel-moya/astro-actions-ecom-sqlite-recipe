@@ -1,10 +1,11 @@
-# Astro Actions Ecommerce with Sqlite/Turso
+# Astro Ecommerce with Sqlite/Tursom, Astro actions and Nanostores
 Combine Astro actions with Sqlite database using Turso to build a functional shopping cart for ecommerce stores.
 
 # Basic Features
 - Add/remove items from cart
 - Clear cart
 - Local State synced with server State
+- Data validation with zod
 
 # Technologies
 - Astro
